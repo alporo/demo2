@@ -172,6 +172,31 @@ class AntPathMatcherTests {
         assertThat(paths).containsExactly(expected);
     }
 
+    // most probably this is a bug
+    @Test
+    void patternComparatorSort_versioned_RandomIfNoExactMatch() {
+        Comparator<String> comparator = pathMatcher.getPatternComparator("/api/v2/hotels/ne?");
+        List<String> paths = Arrays.asList(
+                "/api/v2/hotels/new",
+                "/api/v2/hotels/n?w");
+        String[] expected = {
+                "/api/v2/hotels/new",
+                "/api/v2/hotels/n?w"};
+
+        paths.sort(comparator);
+        assertThat(paths).containsExactly(expected);
+
+        List<String> pathsReversed = Arrays.asList(
+                "/api/v2/hotels/n?w",
+                "/api/v2/hotels/new");
+        String[] expectedReversed = {
+                "/api/v2/hotels/n?w",
+                "/api/v2/hotels/new"};
+
+        pathsReversed.sort(comparator);
+        assertThat(pathsReversed).containsExactly(expectedReversed);
+    }
+
     @Test
     void patternComparatorSort_versioned_PreferExactMatch() {
         Comparator<String> comparator = pathMatcher.getPatternComparator("/api/v2/hotels/new");
