@@ -19,17 +19,17 @@ class VersionedAntPathMatcher : AntPathMatcher() {
 
     private fun wildcardVersionApi(s: String) = s.replaceFirst(versionString(s), "*")
 
-    override fun getPatternComparator(path: String): Comparator<String> {
-        return (Comparator<String> { p1, p2 ->
-            if (!regex.matches(path) || !regex.matches(p1) || !regex.matches(p2)) 0 else {
-                val pv1 = version(p1)
-                val pv2 = version(p2)
-                when {
-                    pv1 > pv2 -> -1
-                    pv1 < pv2 -> 1
-                    else -> 0
-                }
+    override fun getPatternComparator(path: String): Comparator<String> =
+            (Comparator<String> { p1, p2 ->
+                if (!regex.matches(path) || !regex.matches(p1) || !regex.matches(p2)) 0
+                else compare(version(path), version(p1), version(p2))
+            }).thenComparing(super.getPatternComparator(path))
+
+    private fun compare(pathv: Int, pv1: Int, pv2: Int): Int =
+            when {
+                pathv == pv1 && pathv == pv2 -> 0
+                pathv == pv1 && pathv != pv2 -> -1
+                pathv != pv1 && pathv == pv2 -> 1
+                else -> pv2 - pv1
             }
-        }).thenComparing(super.getPatternComparator(path))
-    }
 }
