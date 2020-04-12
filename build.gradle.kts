@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.springframework.boot.gradle.tasks.buildinfo.BuildInfo
 
 plugins {
     id("org.springframework.boot") version "2.2.6.RELEASE"
@@ -39,4 +40,8 @@ tasks.withType<KotlinCompile> {
 
 springBoot {
     buildInfo()
+}
+
+tasks.withType<BuildInfo> {
+    mustRunAfter(tasks.processResources)
 }
